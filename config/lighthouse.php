@@ -94,7 +94,7 @@ return [
          * - 1: uses the store, key and ttl config values to store the schema as a string in the given cache store.
          * - 2: uses the path config value to store the schema in a PHP file allowing OPcache to pick it up.
          */
-        'version' => env('LIGHTHOUSE_CACHE_VERSION', 1),
+        'version' => env('LIGHTHOUSE_CACHE_VERSION', 2),
 
         /*
          * Allows using a specific cache store, uses the app's default if set to null.
@@ -123,7 +123,7 @@ return [
         /*
          * Should the `@cache` directive use a tagged cache?
          */
-        'tags' => false,
+        'tags' => true,
     ],
 
     /*
@@ -169,15 +169,15 @@ return [
     */
 
     'namespaces' => [
-        'models' => ['App', 'App\\Models'],
+        'models' => 'App\\Models',
         'queries' => 'App\\GraphQL\\Queries',
         'mutations' => 'App\\GraphQL\\Mutations',
         'subscriptions' => 'App\\GraphQL\\Subscriptions',
         'interfaces' => 'App\\GraphQL\\Interfaces',
         'unions' => 'App\\GraphQL\\Unions',
         'scalars' => 'App\\GraphQL\\Scalars',
-        'directives' => ['App\\GraphQL\\Directives'],
-        'validators' => ['App\\GraphQL\\Validators'],
+        'directives' => 'App\\GraphQL\\Directives',
+        'validators' => 'App\\GraphQL\\Validators',
     ],
 
     /*
@@ -366,7 +366,7 @@ return [
     |
     */
 
-    'shortcut_foreign_key_selection' => false,
+    'shortcut_foreign_key_selection' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -381,7 +381,7 @@ return [
     |
     */
 
-    'non_null_pagination_results' => false,
+    'non_null_pagination_results' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -399,7 +399,7 @@ return [
     |
     */
 
-    'unbox_bensampo_enum_enum_instances' => true,
+    'unbox_bensampo_enum_enum_instances' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -466,7 +466,7 @@ return [
          * Controls the format of the extensions response.
          * Allowed values: 1, 2
          */
-        'version' => env('LIGHTHOUSE_SUBSCRIPTION_VERSION', 1),
+        'version' => env('LIGHTHOUSE_SUBSCRIPTION_VERSION', 2),
 
         /*
          * Should the subscriptions extension be excluded when the response has no subscription channel?
