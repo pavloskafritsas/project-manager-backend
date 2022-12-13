@@ -28,6 +28,10 @@ return [
          * make sure to return spec-compliant responses in case an error is thrown.
          */
         'middleware' => [
+            // Provides mitigation against CSRF attacks
+            // @see https://lighthouse-php.com/5/security/csrf.html
+            \Nuwave\Lighthouse\Support\Http\Middleware\EnsureXHR::class,
+
             \Nuwave\Lighthouse\Support\Http\Middleware\AcceptJson::class,
 
             // Logs in a user if they are authenticated. In contrast to Laravel's 'auth'
