@@ -1,4 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# run tests
 ./vendor/bin/sail artisan test --without-tty -pqn --recreate-databases
+
+# lint staged files
+yarn lint-staged
