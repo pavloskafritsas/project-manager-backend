@@ -4,6 +4,9 @@
 # validate GraphQL schema
 ./vendor/bin/sail artisan lighthouse:validate-schema
 
+# run static analysis
+./vendor/bin/sail composer analyse
+
 # run tests
 ./vendor/bin/sail artisan test --without-tty -pqn --recreate-databases
 
