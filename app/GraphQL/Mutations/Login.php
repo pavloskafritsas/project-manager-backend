@@ -11,6 +11,7 @@ final class Login
     /**
      * @param  null  $_
      * @param  array{email: string, password: string, remember?: bool}  $args
+     * @param  Context  $ctx
      */
     public function __invoke(null $_, array $args, Context $ctx): User
     {
@@ -25,7 +26,10 @@ final class Login
         $remember = $args['remember'] ?? false;
 
         if (! $guard->attempt($credentials, $remember)) {
-            throw new Error(__('auth.failed'));
+            /** @var string $message */
+            $message = __('auth.failed');
+
+            throw new Error($message);
         }
 
         $ctx->request->session()->regenerate();

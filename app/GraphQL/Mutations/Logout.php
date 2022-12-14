@@ -7,6 +7,11 @@ use Nuwave\Lighthouse\Schema\Context;
 
 final class Logout
 {
+    /**
+     * @param  null  $_
+     * @param  null[]  $args
+     * @param  Context  $ctx
+     */
     public function __invoke(null $_, array $args, Context $ctx): User
     {
         $guard = auth()->guard();
