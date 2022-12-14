@@ -65,12 +65,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * The user's password attribute.
+     *
+     * @return Attribute<string, string>
+     */
     protected function password(): Attribute
     {
         return Attribute::make(
-            set: fn (?string $value) => ! is_null($value)
-                ? Hash::make($value)
-                : $value,
+            /** Hash user's password when set. */
+            set: fn (string $value) => Hash::make($value),
         );
     }
 }
