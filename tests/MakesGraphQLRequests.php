@@ -14,7 +14,6 @@ trait MakesGraphQLRequests
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
             'Origin' => getenv('APP_URL'),
-            'Referer' => getenv('APP_URL'),
             'X-XSRF-TOKEN' => getCsrfToken(),
         ];
     }
