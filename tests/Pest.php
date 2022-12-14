@@ -11,7 +11,10 @@
 |
 */
 
-uses(Tests\TestCase::class)->in('Feature');
+use App\Models\User;
+use Illuminate\Testing\TestResponse;
+
+uses(\Tests\TestCase::class)->in('Feature', 'Unit');
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +42,67 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function getCsrfToken(): string
 {
-    // ..
+    /** @var \Illuminate\Testing\TestResponse $res */
+    $res = test()->get('/sanctum/csrf-cookie');
+
+    return $res->getCookie('XSRF-TOKEN')->getValue();
+}
+
+function login(?User $user = null, ?bool $remember = null): TestResponse
+{
+    if (! $user) {
+        /** @var User $user */
+        $user = User::factory()->createOne();
+    }
+
+    $data = [
+        'email' => $user->email,
+        'password' => 'password',
+    ] + (isset($remember) ? compact('remember') : []);
+
+    return test()->graphQL(
+        /** @lang GraphQL */
+        '
+    mutation ($email: String!, $password: String!, $remember: Boolean)
+        {
+            login (email: $email, password: $password, remember: $remember) {
+                __typename
+                id
+                name
+                email
+            }
+        }
+    ',
+        $data,
+        [],
+        test()->getRequestHeaders(),
+    );
+}
+
+function logout(?User $user = null): TestResponse
+{
+    if (! $user) {
+        /** @var User $user */
+        $user = User::factory()->createOne();
+    }
+
+    return test()->graphQL(
+        /** @lang GraphQL */
+        '
+    mutation
+        {
+            logout {
+                __typename
+                id
+                name
+                email
+            }
+        }
+    ',
+        [],
+        [],
+        test()->getRequestHeaders(),
+    );
 }

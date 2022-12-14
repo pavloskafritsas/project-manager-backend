@@ -32,6 +32,8 @@ return [
             // @see https://lighthouse-php.com/5/security/csrf.html
             \Nuwave\Lighthouse\Support\Http\Middleware\EnsureXHR::class,
 
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+
             \Nuwave\Lighthouse\Support\Http\Middleware\AcceptJson::class,
 
             // Logs in a user if they are authenticated. In contrast to Laravel's 'auth'
@@ -60,7 +62,7 @@ return [
     |
     */
 
-    'guard' => 'api',
+    'guard' => null,
 
     /*
     |--------------------------------------------------------------------------
