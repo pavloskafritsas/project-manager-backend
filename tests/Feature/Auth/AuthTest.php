@@ -1,7 +1,7 @@
 <?php
 
 test('can return the currently authenticated user', function () {
-    $LOGIN_QUERY =
+    $ME_QUERY =
         /** @lang GraphQL */
         '
         {
@@ -14,9 +14,9 @@ test('can return the currently authenticated user', function () {
         }
     ';
 
-    $this->graphQL($LOGIN_QUERY)->assertExactJson(['data' => ['me' => null]]);
+    $this->graphQL($ME_QUERY)->assertExactJson(['data' => ['me' => null]]);
 
     $res = login();
 
-    $this->graphQL($LOGIN_QUERY)->assertExactJson(['data' => ['me' => $res['data']['login']]]);
+    $this->graphQL($ME_QUERY)->assertExactJson(['data' => ['me' => $res['data']['login']]]);
 });
