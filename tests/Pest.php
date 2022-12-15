@@ -13,6 +13,7 @@
 
 use App\Models\User;
 use Illuminate\Testing\TestResponse;
+use Tests\Feature\Auth\AuthOperation;
 
 uses(\Tests\TestCase::class)->in('Feature', 'Unit');
 
@@ -62,23 +63,7 @@ function login(?User $user = null, ?bool $remember = null): TestResponse
         'password' => 'password',
     ] + (isset($remember) ? compact('remember') : []);
 
-    return test()->graphQL(
-        /** @lang GraphQL */
-        '
-    mutation ($email: String!, $password: String!, $remember: Boolean)
-        {
-            login (email: $email, password: $password, remember: $remember) {
-                __typename
-                id
-                name
-                email
-            }
-        }
-    ',
-        $data,
-        [],
-        test()->getRequestHeaders(),
-    );
+    return test()->graphQL(AuthOperation::MUTATION_LOGIN, $data);
 }
 
 function logout(?User $user = null): TestResponse
@@ -88,21 +73,5 @@ function logout(?User $user = null): TestResponse
         $user = User::factory()->createOne();
     }
 
-    return test()->graphQL(
-        /** @lang GraphQL */
-        '
-    mutation
-        {
-            logout {
-                __typename
-                id
-                name
-                email
-            }
-        }
-    ',
-        [],
-        [],
-        test()->getRequestHeaders(),
-    );
+    return test()->graphQL(AuthOperation::MUTATION_LOGOUT);
 }

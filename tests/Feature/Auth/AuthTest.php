@@ -1,22 +1,15 @@
 <?php
 
-test('can return the currently authenticated user', function () {
-    $ME_QUERY =
-        /** @lang GraphQL */
-        '
-        {
-            me {
-                __typename
-                id
-                name
-                email
-            }
-        }
-    ';
+use Tests\Feature\Auth\AuthOperation;
 
-    $this->graphQL($ME_QUERY)->assertExactJson(['data' => ['me' => null]]);
+test('can return the currently authenticated user', function () {
+    $this
+        ->graphQL(AuthOperation::QUERY_ME)
+        ->assertExactJson(['data' => ['me' => null]]);
 
     $res = login();
 
-    $this->graphQL($ME_QUERY)->assertExactJson(['data' => ['me' => $res['data']['login']]]);
+    $this
+        ->graphQL(AuthOperation::QUERY_ME)
+        ->assertExactJson(['data' => ['me' => $res['data']['login']]]);
 });
