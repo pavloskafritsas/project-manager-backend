@@ -7,9 +7,11 @@ test('can login', function () {
 
     $res = login($user);
 
-    $data = ['data' => [
-        'login' => ['__typename' => 'User'] + $user->only(['id', 'name', 'email']),
-    ]];
+    $data = [
+        'data' => [
+            'login' => ['__typename' => 'User'] + $user->only(['id', 'name', 'email']),
+        ],
+    ];
 
     $res->assertJson($data);
 });
