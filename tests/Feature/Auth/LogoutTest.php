@@ -1,19 +1,17 @@
 <?php
 
+namespace Tests\Feature\Auth;
+
 use App\Models\User;
 
 test('can logout', function () {
+    $mutationLogout = GraphQLHelper::MUTATION_LOGOUT;
+
     $user = User::factory()->createOne();
 
     login($user);
 
     $res = logout($user);
 
-    $value = [
-        'data' => [
-            'logout' => ['__typename' => 'User'] + $user->only(['id', 'name', 'email']),
-        ],
-    ];
-
-    $res->assertJson($value);
+    $res->assertJson($mutationLogout->generateResponse($user->only(['id', 'name', 'email'])));
 });

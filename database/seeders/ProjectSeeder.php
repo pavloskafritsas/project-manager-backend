@@ -15,8 +15,8 @@ class ProjectSeeder extends Seeder
     public function run(): void
     {
         Project::factory()
-            ->hasMetas(Meta::factory()->count(5))
-            ->hasTasks(Task::factory()->count(15))
+            ->has(Meta::factory()->count(5))
+            ->has(Task::factory()->count(15))
             ->count(30)
             ->create();
     }
