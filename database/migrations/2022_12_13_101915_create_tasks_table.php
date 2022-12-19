@@ -16,9 +16,11 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->mediumText('description')->nullable();
+            $table->text('description')->nullable();
             $table->enum('priority', Priority::values());
             $table->enum('status', Status::values());
+            $table->date('from')->nullable();
+            $table->date('to')->nullable();
             $table
                 ->foreignId('project_id')
                 ->constrained()
