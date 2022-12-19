@@ -1,0 +1,48 @@
+"Meta attribute type."
+enum MetaType {
+    "Meta TEXT type."
+    TEXT
+
+    "Meta URL type."
+    URL
+}
+
+"Meta attribute of a project."
+type Meta {
+    "Unique primary key."
+    id: ID!
+
+    "The meta's attribute name."
+    attribute: String!
+
+    "The meta's attribute value."
+    value: String!
+
+    "The meta's attribute type."
+    type: MetaType!
+
+    "The ID of the project the meta attribute belongs to."
+    project_id: ID!
+
+    "The project the meta attribute belongs to."
+    project: Project! @belongsTo
+
+    "When the meta attribute was created."
+    created_at: DateTime!
+
+    "When the meta attribute was last updated."
+    updated_at: DateTime!
+}
+
+input CreateMetaInput {
+    attribute: String! @rules(apply: ["string", "max:255"])
+    value: String! @rules(apply: ["string", "max:255"])
+    type: MetaType!
+}
+
+input UpdateMetaInput {
+    id: ID! @rules(apply: ["exists:metas,id"])
+    attribute: String @rules(apply: ["string", "max:255"])
+    value: String @rules(apply: ["string", "max:255"])
+    type: MetaType
+}

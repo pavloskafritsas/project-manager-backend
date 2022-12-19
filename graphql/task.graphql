@@ -1,0 +1,74 @@
+"The priority of a task."
+enum Priority {
+    CRITICAL
+    HIGH
+    NORMAL
+    LOW
+}
+
+"The status of a task."
+enum Status {
+    BACKLOG
+    CANCELLED
+    COMPLETED
+    IN_PROGRESS
+    TO_DO
+}
+
+"Task of a project."
+type Task {
+    "Unique primary key."
+    id: ID!
+
+    "Task's name."
+    name: String!
+
+    "Task's description."
+    description: String
+
+    "Task's priority."
+    priority: Priority!
+
+    "Task's status."
+    status: Status!
+
+    "Task's date from interval."
+    from: Date
+
+    "Task's date to interval."
+    to: Date
+
+    "The ID of the project the task belongs to."
+    project_id: ID!
+
+    "The project the task belongs to."
+    project: Project! @belongsTo
+
+    "When the task was created."
+    created_at: DateTime!
+
+    "When the task was last updated."
+    updated_at: DateTime!
+}
+
+input CreateTaskInput {
+    name: String! @rules(apply: ["string", "max:255"])
+    description: String @rules(apply: ["nullable", "string", "max:65535"])
+    status: Status!
+    priority: Priority!
+    from: Date @rules(apply: ["nullable"])
+    to: Date @rules(apply: ["nullable", "prohibited_if:from,null"])
+}
+
+input UpdateTaskInput {
+    id: ID! @rules(apply: ["exists:tasks,id"])
+    name: String @rules(apply: ["string", "max:255"])
+    description: String @rules(apply: ["nullable", "string", "max:65535"])
+    status: Status
+    priority: Priority
+    from: Date @rules(apply: ["date_format:Y-m-d"])
+    to: Date
+        @rules(
+            apply: ["nullable", "date_format:Y-m-d", "prohibited_if:from,null"]
+        )
+}
