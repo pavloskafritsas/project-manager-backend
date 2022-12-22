@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereProjectId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  *
  * @property string|null $description
@@ -40,6 +41,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Task extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'start_at' => 'date:Y-m-d',
+        'end_at' => 'date:Y-m-d',
+    ];
 
     /**
      * The project the model belongs to.
