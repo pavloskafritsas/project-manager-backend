@@ -17,11 +17,11 @@ class TaskFactory extends Factory
      */
     public function definition(): array
     {
-        $from = fake()->randomElement() ? fake()->date() : null;
+        $start_at = fake()->randomElement() ? fake()->date() : null;
 
-        $to = $from
+        $end_at = $start_at
             ? (fake()->boolean()
-                ? Carbon::parse($from)->addDays(fake()->randomNumber(2))->format('Y-m-d')
+                ? Carbon::parse($start_at)->addDays(fake()->randomNumber(2))->format('Y-m-d')
                 : null)
             : null;
 
@@ -30,8 +30,8 @@ class TaskFactory extends Factory
             'description' => fake()->boolean() ? fake()->text() : null,
             'priority' => fake()->randomElement(Priority::values()),
             'status' => fake()->randomElement(Status::values()),
-            'from' => $from,
-            'to' => $to,
+            'start_at' => $start_at,
+            'end_at' => $end_at,
         ];
     }
 }

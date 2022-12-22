@@ -19,8 +19,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->enum('priority', Priority::values());
             $table->enum('status', Status::values());
-            $table->date('from')->nullable();
-            $table->date('to')->nullable();
+            $table->date('start_at')->nullable();
+            $table->date('end_at')->nullable();
             $table
                 ->foreignId('project_id')
                 ->constrained()

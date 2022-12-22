@@ -53,8 +53,8 @@ enum GraphQLHelper
                         description
                         priority
                         status
-                        from
-                        to
+                        start_at
+                        end_at
                     }
                 }
             }
@@ -92,8 +92,8 @@ enum GraphQLHelper
                         description
                         priority
                         status
-                        from
-                        to
+                        start_at
+                        end_at
                     }
                 }
             }
