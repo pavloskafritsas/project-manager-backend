@@ -19,12 +19,9 @@ type Project {
     updated_at: DateTime!
 }
 
-extend type Query {
+extend type Query @guard {
     "List multiple projects."
-    projects: [Project]!
-        @paginate(defaultCount: 10)
-        @guard
-        @can(ability: "viewAny")
+    projects: [Project]! @paginate(defaultCount: 10) @can(ability: "viewAny")
 }
 
 input CreateTasksHasMany {
@@ -45,25 +42,23 @@ input CreateProjectInput {
     metas: CreateMetasHasMany
 }
 
-input UpdateProjectInput {
-    name: String @rules(apply: ["string", "max:255", "unique:projects,name"])
+input UpdateProjectInput @validator {
+    id: ID!
+    name: String
     tasks: CreateTasksHasMany
     metas: CreateMetasHasMany
 }
 
-extend type Mutation {
+extend type Mutation @guard {
     createProject(input: CreateProjectInput! @spread): Project!
         @create
-        @guard
         @can(ability: "create")
 
-    updateProject(
-        id: ID! @rules(apply: ["exists:projects,id"])
-        input: UpdateProjectInput! @spread
-    ): Project! @update @guard @can(ability: "update", find: "id")
+    updateProject(input: UpdateProjectInput! @spread): Project!
+        @update
+        @can(ability: "update", find: "id")
 
     deleteProject(id: ID! @rules(apply: ["exists:projects,id"])): Project!
         @delete
-        @guard
         @can(ability: "delete", find: "id")
 }
