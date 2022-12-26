@@ -10,86 +10,105 @@ use function PHPUnit\Framework\assertEmpty;
 use function PHPUnit\Framework\assertTrue;
 use Tests\TestCase;
 
-$mutationUpdateProject = GraphQLHelper::MUTATION_UPDATE_PROJECT;
+$mutationUpdate = GraphQLHelper::MUTATION_UPDATE_PROJECT;
 
-test('unauthorized user cannot update project', function () use ($mutationUpdateProject) {
-    $project = Project::factory()->create();
+test(
+    'unauthorized user cannot update project',
+    function () use ($mutationUpdate) {
+        $project = Project::factory()->create();
 
-    $variables = ['id' => $project->id, 'input' => ['name' => 'Updated name']];
+        $variables = [
+            'input' => [
+                'id' => $project->id,
+                'name' => 'Updated name',
+            ],
+        ];
 
-    /** @var TestCase $this */
-    $this
-        ->graphQL($mutationUpdateProject->operation(), $variables)
-        ->assertGraphQLErrorMessage('Unauthenticated.');
-});
+        /** @var TestCase $this */
+        $this
+            ->graphQL($mutationUpdate->operation(), $variables)
+            ->assertGraphQLErrorMessage('Unauthenticated.');
+    }
+);
 
-test('authorized user can update project', function () use ($mutationUpdateProject) {
-    login();
+test(
+    'authorized user can update project',
+    function () use ($mutationUpdate) {
+        login();
 
-    $project = Project::factory()->create();
+        $project = Project::factory()->create();
 
-    $variables = ['id' => $project->id, 'input' => ['name' => 'Updated name']];
+        $variables = [
+            'input' => [
+                'id' => $project->id,
+                'name' => 'Updated name',
+            ],
+        ];
 
-    $value = ['name' => 'Updated name'];
+        $value = ['name' => 'Updated name'];
 
-    /** @var TestCase $this */
-    $this
-        ->graphQL($mutationUpdateProject->operation(), $variables)
-        ->assertJson($mutationUpdateProject->generateResponse($value));
-});
+        /** @var TestCase $this */
+        $this
+            ->graphQL($mutationUpdate->operation(), $variables)
+            ->assertJson($mutationUpdate->generateResponse($value));
+    }
+);
 
-test('can update project, metas and tasks', function () use ($mutationUpdateProject) {
-    login();
+test(
+    'can update project, metas and tasks',
+    function () use ($mutationUpdate) {
+        login();
 
-    $project = Project::factory()
-        ->has(Meta::factory()->count(3))
-        ->has(Task::factory()->count(2))
-        ->create();
+        $project = Project::factory()
+            ->has(Meta::factory()->count(3))
+            ->has(Task::factory()->count(2))
+            ->create();
 
-    $metas = Meta::query()
-        ->get(['id', 'attribute', 'value'])
-        ->map(fn (Meta $meta) => [
-            'id' => $meta->id,
-            'attribute' => "updated_attribute_{$meta->id}",
-            'value' => "updated_value_{$meta->id}",
+        $metas = Meta::query()
+            ->get(['id', 'attribute', 'value'])
+            ->map(fn (Meta $meta) => [
+                'id' => $meta->id,
+                'attribute' => "updated_attribute_{$meta->id}",
+                'value' => "updated_value_{$meta->id}",
+            ]);
+
+        $tasks = Task::query()
+            ->get(['id', 'name'])
+            ->map(fn (Task $task) => [
+                'id' => $task->id,
+                'name' => "updated_name_{$task->id}",
+            ]);
+
+        $variables = [
+            'input' => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'metas' => ['update' => $metas->toArray()],
+                'tasks' => ['update' => $tasks->toArray()],
+            ],
+        ];
+
+        $value = $mutationUpdate->generateResponse([
+            ...$project->only(['name']),
+            'metas' => $metas->map(fn (array $meta) => [
+                '__typename' => 'Meta',
+                'attribute' => $meta['attribute'],
+                'value' => $meta['value'],
+            ])->toArray(),
+            'tasks' => $tasks->map(fn (array $task) => [
+                '__typename' => 'Task',
+                'name' => $task['name'],
+            ])->toArray(),
         ]);
 
-    $tasks = Task::query()
-        ->get(['id', 'name'])
-        ->map(fn (Task $task) => [
-            'id' => $task->id,
-            'name' => "updated_name_{$task->id}",
-        ]);
+        /** @var TestCase $this */
+        $this
+            ->graphQL($mutationUpdate->operation(), $variables)
+            ->assertJson($value);
+    }
+);
 
-    $variables = [
-        'id' => $project->id,
-        'name' => $project->name,
-        'input' => [
-            'metas' => ['update' => $metas->toArray()],
-            'tasks' => ['update' => $tasks->toArray()],
-        ],
-    ];
-
-    $value = $mutationUpdateProject->generateResponse([
-        ...$project->only(['name']),
-        'metas' => $metas->map(fn (array $meta) => [
-            '__typename' => 'Meta',
-            'attribute' => $meta['attribute'],
-            'value' => $meta['value'],
-        ])->toArray(),
-        'tasks' => $tasks->map(fn (array $task) => [
-            '__typename' => 'Task',
-            'name' => $task['name'],
-        ])->toArray(),
-    ]);
-
-    /** @var TestCase $this */
-    $this
-        ->graphQL($mutationUpdateProject->operation(), $variables)
-        ->assertJson($value);
-});
-
-test('can delete project\'s metas and tasks', function () use ($mutationUpdateProject) {
+test('can delete project\'s metas and tasks', function () use ($mutationUpdate) {
     login();
 
     /** @var Collection<int, Project> $projects */
@@ -106,15 +125,15 @@ test('can delete project\'s metas and tasks', function () use ($mutationUpdatePr
     $taskIds = $project->tasks->pluck('id');
 
     $variables = [
-        'id' => $project->id,
         'input' => [
+            'id' => $project->id,
             'metas' => ['delete' => $metaIds],
             'tasks' => ['delete' => $taskIds],
         ],
     ];
 
     /** @var TestCase $this */
-    $this->graphQL($mutationUpdateProject->operation(), $variables);
+    $this->graphQL($mutationUpdate->operation(), $variables);
 
     assertEmpty(Meta::findMany($metaIds));
     assertEmpty(Task::findMany($taskIds));

@@ -6,63 +6,75 @@ use App\Models\Meta;
 use App\Models\Project;
 use App\Models\Task;
 
-$mutationCreateProject = GraphQLHelper::MUTATION_CREATE_PROJECT;
+$mutationCreate = GraphQLHelper::MUTATION_CREATE_PROJECT;
 
-test('unauthorized user cannot create project', function () use ($mutationCreateProject) {
-    $input = Project::factory()->definition();
+test(
+    'unauthorized user cannot create project',
+    function () use ($mutationCreate) {
+        $input = Project::factory()->definition();
 
-    /** @var TestCase $this */
-    $this
-        ->graphQL($mutationCreateProject->operation(), ['input' => $input])
-        ->assertGraphQLErrorMessage('Unauthenticated.');
-});
+        /** @var TestCase $this */
+        $this
+            ->graphQL($mutationCreate->operation(), ['input' => $input])
+            ->assertGraphQLErrorMessage('Unauthenticated.');
+    }
+);
 
-test('authorized user can create project', function () use ($mutationCreateProject) {
-    login();
+test(
+    'authorized user can create project',
+    function () use ($mutationCreate) {
+        login();
 
-    $input = Project::factory()->definition();
+        $input = Project::factory()->definition();
 
-    /** @var TestCase $this */
-    $this
-        ->graphQL($mutationCreateProject->operation(), ['input' => $input])
-        ->assertJson($mutationCreateProject->generateResponse($input));
-});
+        /** @var TestCase $this */
+        $this
+            ->graphQL($mutationCreate->operation(), ['input' => $input])
+            ->assertJson($mutationCreate->generateResponse($input));
+    }
+);
 
-test('cannot create project if the name has already been taken', function () use ($mutationCreateProject) {
-    login();
+test(
+    'cannot create project if the name has already been taken',
+    function () use ($mutationCreate) {
+        login();
 
-    /** @var Project $project */
-    $project = Project::factory()->create();
+        /** @var Project $project */
+        $project = Project::factory()->create();
 
-    $input = ['name' => $project->name] + Project::factory()->definition();
+        $input = ['name' => $project->name] + Project::factory()->definition();
 
-    /** @var TestCase $this */
-    $this
-        ->graphQL($mutationCreateProject->operation(), ['input' => $input])
-        ->assertGraphQLValidationError('input.name', 'The input.name has already been taken.');
-});
+        /** @var TestCase $this */
+        $this
+            ->graphQL($mutationCreate->operation(), ['input' => $input])
+            ->assertGraphQLValidationError('input.name', 'The input.name has already been taken.');
+    }
+);
 
-test('can create project with metas and tasks', function () use ($mutationCreateProject) {
-    login();
+test(
+    'can create project with metas and tasks',
+    function () use ($mutationCreate) {
+        login();
 
-    $project = Project::factory()->definition();
-    $meta = Meta::factory()->definition();
-    $task = Task::factory()->definition();
+        $project = Project::factory()->definition();
+        $meta = Meta::factory()->definition();
+        $task = Task::factory()->definition();
 
-    $input = [
-        ...$project,
-        'metas' => ['create' => [$meta]],
-        'tasks' => ['create' => [$task]],
-    ];
+        $input = [
+            ...$project,
+            'metas' => ['create' => [$meta]],
+            'tasks' => ['create' => [$task]],
+        ];
 
-    $value = $mutationCreateProject->generateResponse([
-        ...$project,
-        'metas' => [['__typename' => 'Meta', ...$meta]],
-        'tasks' => [['__typename' => 'Task', ...$task]],
-    ]);
+        $value = $mutationCreate->generateResponse([
+            ...$project,
+            'metas' => [['__typename' => 'Meta', ...$meta]],
+            'tasks' => [['__typename' => 'Task', ...$task]],
+        ]);
 
-    /** @var TestCase $this */
-    $this
-        ->graphQL($mutationCreateProject->operation(), ['input' => $input])
-        ->assertJson($value);
-});
+        /** @var TestCase $this */
+        $this
+            ->graphQL($mutationCreate->operation(), ['input' => $input])
+            ->assertJson($value);
+    }
+);

@@ -5,48 +5,62 @@ namespace Tests\Feature\Models\Project;
 use App\Models\Meta;
 use App\Models\Project;
 use App\Models\Task;
+use Illuminate\Database\Eloquent\Collection;
 
-$mutationQueryProject = GraphQLHelper::QUERY_PROJECTS;
+$mutationQuery = GraphQLHelper::QUERY_PROJECTS;
 
-test('authorized user can list projects', function () use ($mutationQueryProject) {
-    login();
+test(
+    'unauthorized user cannot list projects',
+    function () use ($mutationQuery) {
+        /** @var TestCase $this */
+        $this
+            ->graphQL($mutationQuery->operation())
+            ->assertGraphQLErrorMessage('Unauthenticated.');
+    }
+);
 
-    /** @var Collection<Project> */
-    $projectList = Project::factory()
-        ->hasMetas(Meta::factory()->count(1))
-        ->hasTasks(Task::factory()->count(1))
-        ->count(1)
-        ->create();
+test(
+    'authorized user can list projects',
+    function () use ($mutationQuery) {
+        login();
 
-    $value = $mutationQueryProject->generateResponse([
-        'data' => $projectList->map(fn (Project $project) => [
-            '__typename' => 'Project',
-            ...$project->only(['id', 'name']),
-            'metas' => $project->metas->map(fn (Meta $meta) => [
-                '__typename' => 'Meta',
-                ...$meta->only(['attribute', 'value', 'type']),
-            ])->toArray(),
-            'tasks' => $project->tasks->map(fn (Task $task) => [
-                '__typename' => 'Task',
-                ...$task->only(['name', 'description', 'priority', 'status']),
-            ])->toArray(),
-        ])->toArray(),
-    ], false);
+        /** @var Collection<Project> */
+        $project = Project::factory()
+            ->hasMetas(Meta::factory())
+            ->hasTasks(Task::factory())
+            ->create();
 
-    /** @var TestCase $this */
-    $this->graphQL($mutationQueryProject->operation())->assertJson($value);
-});
+        $value = $mutationQuery->generateResponse(
+            [
+                'data' => [
+                    [
+                        '__typename' => 'Project',
+                        ...$project->only(['id', 'name']),
+                        'metas' => [
+                            [
+                                '__typename' => 'Meta',
+                                ...$project
+                                    ->metas
+                                    ->first()
+                                    ->only(['attribute', 'value', 'type']),
+                            ],
+                        ],
+                        'tasks' => [
+                            [
+                                '__typename' => 'Task',
+                                ...$project
+                                    ->tasks
+                                    ->first()
+                                    ->only(['name', 'description', 'priority', 'status']),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            false
+        );
 
-test('unauthorized user cannot list projects', function () use ($mutationQueryProject) {
-    /** @var Collection<Project> */
-    $projectList = Project::factory()
-        ->hasMetas(Meta::factory()->count(1))
-        ->hasTasks(Task::factory()->count(1))
-        ->count(1)
-        ->create();
-
-    /** @var TestCase $this */
-    $this
-        ->graphQL($mutationQueryProject->operation())
-        ->assertGraphQLErrorMessage('Unauthenticated.');
-});
+        /** @var TestCase $this */
+        $this->graphQL($mutationQuery->operation())->assertJson($value);
+    }
+);

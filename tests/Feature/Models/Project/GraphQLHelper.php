@@ -73,9 +73,9 @@ enum GraphQLHelper
             self::MUTATION_UPDATE_PROJECT =>
             /** @lang GraphQL */
             '
-            mutation($id: ID!, $input: UpdateProjectInput!)
+            mutation($input: UpdateProjectInput!)
             {
-                updateProject(id: $id, input: $input) {
+                updateProject(input: $input) {
                     __typename
                     name
                     metas {
