@@ -12,6 +12,9 @@ type Project {
     "The project's meta attribute list."
     metas: [Meta]! @hasMany
 
+    "The project's billing."
+    billing: Billing @morphOne
+
     "When the project was created."
     created_at: DateTime!
 

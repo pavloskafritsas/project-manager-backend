@@ -44,6 +44,9 @@ type Task {
     "The project the task belongs to."
     project: Project! @belongsTo
 
+    "The task's billing."
+    billing: Billing @morphOne
+
     "When the task was created."
     created_at: DateTime!
 

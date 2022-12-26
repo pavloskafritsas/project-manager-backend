@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\HasBilling;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Project newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Project newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Project query()
+ *
  * @mixin \Eloquent
  *
  * @property int $id
@@ -28,10 +30,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Project whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Project whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Project whereUpdatedAt($value)
+ *
+ * @property-read \App\Models\Billing|null $billing
  */
 class Project extends Model
 {
-    use HasFactory;
+    use HasBilling, HasFactory;
 
     /**
      * The metas that belong to the model.

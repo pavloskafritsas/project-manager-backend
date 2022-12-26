@@ -1,0 +1,63 @@
+"Billing type."
+enum BillingType {
+    "Billing FLAT type."
+    FLAT
+
+    "Billing RATE type."
+    RATE
+}
+
+"The billing's parent model."
+union Billingable = Project | Task
+
+"Billing of a project or task."
+type Billing {
+    "Unique primary key."
+    id: ID!
+
+    "The billing's parent model (project or task)."
+    billingable: Billingable! @morphTo
+
+    "The billing's type."
+    type: BillingType!
+
+    "The billing's price amount."
+    price_amount: Int!
+
+    "When the meta attribute was created."
+    created_at: DateTime!
+
+    "When the meta attribute was last updated."
+    updated_at: DateTime!
+}
+
+input CreateBillingInput {
+    type: BillingType!
+    price_amount: Int! @rules(apply: ["integer", "between:1,4294967295"])
+}
+
+input UpdateBillingInput {
+    id: ID! @rules(apply: ["exists:billings,id"])
+    type: BillingType
+    price_amount: Int @rules(apply: ["integer", "between:1,4294967295"])
+}
+
+extend type Mutation @guard {
+    createProjectBilling(
+        billingable_id: ID! @rules(apply: ["exists:projects,id"])
+        input: CreateBillingInput! @spread
+    ): Billing! @can(ability: "create")
+
+    createTaskBilling(
+        billingable_id: ID! @rules(apply: ["exists:tasks,id"])
+        input: CreateBillingInput! @spread
+    ): Billing! @can(ability: "create")
+
+    updateBilling(input: UpdateBillingInput! @spread): Billing!
+        @can(ability: "update", find: "id")
+        @update
+
+    deleteBilling(id: ID! @rules(apply: ["exists:billings,id"])): Billing!
+        @can(ability: "delete", find: "id")
+        @delete
+}

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Billing;
 use App\Models\Meta;
 use App\Models\Project;
 use App\Models\Task;
@@ -15,9 +16,10 @@ class ProjectSeeder extends Seeder
     public function run(): void
     {
         Project::factory()
+            ->has(Billing::factory())
             ->has(Meta::factory()->count(5))
-            ->has(Task::factory()->count(15))
-            ->count(30)
+            ->has(Task::factory()->has(Billing::factory())->count(15))
+            ->count(20)
             ->create();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\HasBilling;
 use App\Enums\Priority;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,10 +38,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task wherePriority($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereStatus($value)
+ *
+ * @property \Illuminate\Support\Carbon|null $start_at
+ * @property \Illuminate\Support\Carbon|null $end_at
+ * @property-read \App\Models\Billing|null $billing
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereEndAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereStartAt($value)
  */
 class Task extends Model
 {
-    use HasFactory;
+    use HasBilling, HasFactory;
 
     protected $casts = [
         'start_at' => 'date:Y-m-d',
