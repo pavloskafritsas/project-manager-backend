@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Meta newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Meta newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Meta query()
+ *
  * @mixin \Eloquent
  *
  * @property int $id
