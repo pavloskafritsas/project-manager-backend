@@ -50,11 +50,6 @@ class Task extends Model
 {
     use HasBilling, HasFactory;
 
-    protected $casts = [
-        'start_at' => 'date:Y-m-d',
-        'end_at' => 'date:Y-m-d',
-    ];
-
     /**
      * The project the model belongs to.
      *
