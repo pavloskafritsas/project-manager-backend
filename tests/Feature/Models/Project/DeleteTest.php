@@ -3,6 +3,7 @@
 namespace Tests\Feature\Models\Project;
 
 use App\Models\Project;
+use Tests\TestCase;
 
 $mutationDelete = GraphQLHelper::MUTATION_DELETE_PROJECT;
 

@@ -5,6 +5,7 @@ namespace Tests\Feature\Models\Project;
 use App\Models\Meta;
 use App\Models\Project;
 use App\Models\Task;
+use Tests\TestCase;
 
 $mutationCreate = GraphQLHelper::MUTATION_CREATE_PROJECT;
 

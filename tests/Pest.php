@@ -45,8 +45,8 @@ expect()->extend('toBeOne', function () {
 
 function getCsrfToken(): string
 {
-    /** @var \Illuminate\Testing\TestResponse $res */
     $res = test()->get('/sanctum/csrf-cookie');
+    assert($res instanceof TestResponse);
 
     return $res->getCookie('XSRF-TOKEN')->getValue();
 }
@@ -54,8 +54,8 @@ function getCsrfToken(): string
 function login(?User $user = null, ?bool $remember = null): TestResponse
 {
     if (! $user) {
-        /** @var User $user */
         $user = User::factory()->createOne();
+        assert($user instanceof User);
     }
 
     $data = [

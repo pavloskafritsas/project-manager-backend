@@ -5,6 +5,7 @@ namespace Tests\Feature\Models\Billing;
 use App\Models\Billing;
 use App\Models\Project;
 use App\Models\Task;
+use Tests\TestCase;
 
 $mutationCreateProjectBilling = GraphQLHelper::MUTATION_CREATE_PROJECT_BILLING;
 $mutationCreateTaskBilling = GraphQLHelper::MUTATION_CREATE_TASK_BILLING;

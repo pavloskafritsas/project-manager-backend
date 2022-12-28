@@ -6,6 +6,7 @@ use App\Models\Billing;
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Database\Eloquent\Collection;
+use Tests\TestCase;
 
 $mutationQuery = GraphQLHelper::QUERY_PROJECTS;
 

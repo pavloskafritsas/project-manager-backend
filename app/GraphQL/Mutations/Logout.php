@@ -11,13 +11,14 @@ final class Logout
      * @param  null  $_
      * @param  null[]  $args
      * @param  Context  $ctx
+     * @return User
      */
     public function __invoke(null $_, array $args, Context $ctx): User
     {
         $guard = auth()->guard();
 
-        /** @var \App\Models\User $user */
         $user = $guard->user();
+        assert($user instanceof User);
 
         $guard->logout();
 

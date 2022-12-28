@@ -12,6 +12,7 @@ final class Login
      * @param  null  $_
      * @param  array{email: string, password: string, remember?: bool}  $args
      * @param  Context  $ctx
+     * @return User
      */
     public function __invoke(null $_, array $args, Context $ctx): User
     {
@@ -22,20 +23,20 @@ final class Login
             'password' => $args['password'],
         ];
 
-        /** @var bool */
         $remember = $args['remember'] ?? false;
+        assert(is_bool($remember));
 
         if (! $guard->attempt($credentials, $remember)) {
-            /** @var string $message */
             $message = __('auth.failed');
+            assert(is_string($message));
 
             throw new Error($message);
         }
 
         $ctx->request->session()->regenerate();
 
-        /** @var User $user */
         $user = $guard->user();
+        assert($user instanceof User);
 
         return $user;
     }

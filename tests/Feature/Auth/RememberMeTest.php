@@ -9,8 +9,8 @@ use function PHPUnit\Framework\assertTrue;
 use Symfony\Component\HttpFoundation\Cookie;
 
 test('can issue remember_web cookie on login per demand', function () {
-    /** @var User $user */
     $user = User::factory()->createOne();
+    assert($user instanceof User);
 
     $res = login($user, false);
 

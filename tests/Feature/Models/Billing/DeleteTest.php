@@ -5,6 +5,7 @@ namespace Tests\Feature\Models\Billing;
 use App\Models\Billing;
 use App\Models\Project;
 use App\Models\Task;
+use Tests\TestCase;
 
 $mutationDelete = GraphQLHelper::MUTATION_DELETE_BILLING;
 

@@ -118,8 +118,8 @@ test('can delete project\'s metas and tasks', function () use ($mutationUpdate) 
         ->count(10)
         ->create();
 
-    /** @var Project $project */
     $project = $projects->first();
+    assert($project instanceof Project);
 
     $metaIds = $project->metas->pluck('id');
     $taskIds = $project->tasks->pluck('id');
