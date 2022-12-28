@@ -10,22 +10,18 @@ use Tests\TestCase;
 $mutationCreateProjectBilling = GraphQLHelper::MUTATION_CREATE_PROJECT_BILLING;
 $mutationCreateTaskBilling = GraphQLHelper::MUTATION_CREATE_TASK_BILLING;
 
-function getInputFromDefinition(array $definition): array
-{
-    return collect($definition)->only(['type', 'price_amount'])->toArray();
-}
-
 test(
     'unauthorized user cannot create billing',
     function () use ($mutationCreateProjectBilling, $mutationCreateTaskBilling) {
-        $project = Project::factory()->has(Task::factory())->create();
+        $task = Task::factory()->create();
+        assert($task instanceof Task);
 
-        $input = getInputFromDefinition(Billing::factory()->definition());
+        $input = Billing::factory()->inputDefinition();
 
         /** @var TestCase $this */
         $this
             ->graphQL($mutationCreateProjectBilling->operation(), [
-                'billingable_id' => $project->id,
+                'billingable_id' => $task->project_id,
                 'input' => $input,
             ])
             ->assertGraphQLErrorMessage('Unauthenticated.');
@@ -33,7 +29,7 @@ test(
         /** @var TestCase $this */
         $this
             ->graphQL($mutationCreateTaskBilling->operation(), [
-                'billingable_id' => $project->tasks->first()->id,
+                'billingable_id' => $task->id,
                 'input' => $input,
             ])
             ->assertGraphQLErrorMessage('Unauthenticated.');
@@ -47,7 +43,7 @@ test(
 
         $project = Project::factory()->create();
 
-        $input = getInputFromDefinition(Billing::factory()->definition());
+        $input = Billing::factory()->inputDefinition();
 
         /** @var TestCase $this */
         $this
@@ -64,14 +60,14 @@ test(
     function () use ($mutationCreateTaskBilling) {
         login();
 
-        $project = Project::factory()->has(Task::factory())->create();
+        $task = Task::factory()->create();
 
-        $input = getInputFromDefinition(Billing::factory()->definition());
+        $input = Billing::factory()->inputDefinition();
 
         /** @var TestCase $this */
         $this
             ->graphQL($mutationCreateTaskBilling->operation(), [
-                'billingable_id' => $project->tasks->first()->id,
+                'billingable_id' => $task->id,
                 'input' => $input,
             ])
             ->assertJson($mutationCreateTaskBilling->generateResponse($input));

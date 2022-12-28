@@ -11,6 +11,7 @@ test(
     'unauthenticated user cannot delete project',
     function () use ($mutationDelete) {
         $project = Project::factory()->create();
+        assert($project instanceof Project);
 
         /** @var TestCase $this */
         $this
@@ -22,9 +23,10 @@ test(
 test(
     'authenticated user can delete project',
     function () use ($mutationDelete) {
-        $project = Project::factory()->create();
-
         login();
+
+        $project = Project::factory()->create();
+        assert($project instanceof Project);
 
         $value = $mutationDelete->generateResponse(['name' => $project->name]);
 

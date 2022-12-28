@@ -12,23 +12,27 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class BillingFactory extends Factory
 {
+    public function inputDefinition(): array
+    {
+        $type = fake()->randomElement(BillingType::values());
+
+        $price_amount = fake()->randomElement([
+            fake()->randomNumber(3, true),
+            fake()->randomNumber(4, true),
+            fake()->randomNumber(5, true),
+        ]);
+
+        return compact('type', 'price_amount');
+    }
+
     /**
      * Define the model's default state.
      */
     public function definition(): array
     {
-        $type = fake()->randomElement(BillingType::values());
-
-        $billingableType = $this->billingable();
-
-        $priceAmount = $billingableType === Project::class
-            ? fake()->randomNumber(5)
-            : fake()->randomNumber(3);
-
         return [
-            'billingable_type' => $billingableType,
-            'type' => $type,
-            'price_amount' => $priceAmount,
+            ...$this->inputDefinition(),
+            'billingable_type' => $this->billingable(),
             'created_at' => now(),
             'updated_at' => now(),
         ];

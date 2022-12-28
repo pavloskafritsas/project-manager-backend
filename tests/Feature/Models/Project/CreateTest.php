@@ -12,7 +12,7 @@ $mutationCreate = GraphQLHelper::MUTATION_CREATE_PROJECT;
 test(
     'unauthorized user cannot create project',
     function () use ($mutationCreate) {
-        $input = Project::factory()->definition();
+        $input = Project::factory()->inputDefinition();
 
         /** @var TestCase $this */
         $this
@@ -26,7 +26,7 @@ test(
     function () use ($mutationCreate) {
         login();
 
-        $input = Project::factory()->definition();
+        $input = Project::factory()->inputDefinition();
 
         /** @var TestCase $this */
         $this
@@ -40,10 +40,13 @@ test(
     function () use ($mutationCreate) {
         login();
 
-        /** @var Project $project */
         $project = Project::factory()->create();
+        assert($project instanceof Project);
 
-        $input = ['name' => $project->name] + Project::factory()->definition();
+        $input = [
+            ...Project::factory()->inputDefinition(),
+            'name' => $project->name,
+        ];
 
         /** @var TestCase $this */
         $this
@@ -57,9 +60,9 @@ test(
     function () use ($mutationCreate) {
         login();
 
-        $project = Project::factory()->definition();
-        $meta = Meta::factory()->definition();
-        $task = Task::factory()->definition();
+        $project = Project::factory()->inputDefinition();
+        $meta = Meta::factory()->inputDefinition();
+        $task = Task::factory()->inputDefinition();
 
         $input = [
             ...$project,

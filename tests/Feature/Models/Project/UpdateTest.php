@@ -63,7 +63,9 @@ test(
             ->has(Meta::factory()->count(3))
             ->has(Task::factory()->count(2))
             ->create();
+        assert($project instanceof Project);
 
+        /** @var Collection<Meta> */
         $metas = Meta::query()
             ->get(['id', 'attribute', 'value'])
             ->map(fn (Meta $meta) => [
@@ -72,6 +74,7 @@ test(
                 'value' => "updated_value_{$meta->id}",
             ]);
 
+        /** @var Collection<Task> */
         $tasks = Task::query()
             ->get(['id', 'name'])
             ->map(fn (Task $task) => [
@@ -108,36 +111,39 @@ test(
     }
 );
 
-test('can delete project\'s metas and tasks', function () use ($mutationUpdate) {
-    login();
+test(
+    'can delete project\'s metas and tasks',
+    function () use ($mutationUpdate) {
+        login();
 
-    /** @var Collection<int, Project> $projects */
-    $projects = Project::factory()
-        ->has(Meta::factory()->count(3))
-        ->has(Task::factory()->count(2))
-        ->count(10)
-        ->create();
+        /** @var Collection<int, Project> $projects */
+        $projects = Project::factory()
+            ->has(Meta::factory()->count(3))
+            ->has(Task::factory()->count(2))
+            ->count(10)
+            ->create();
 
-    $project = $projects->first();
-    assert($project instanceof Project);
+        $project = $projects->first();
+        assert($project instanceof Project);
 
-    $metaIds = $project->metas->pluck('id');
-    $taskIds = $project->tasks->pluck('id');
+        $metaIds = $project->metas->pluck('id');
+        $taskIds = $project->tasks->pluck('id');
 
-    $variables = [
-        'input' => [
-            'id' => $project->id,
-            'metas' => ['delete' => $metaIds],
-            'tasks' => ['delete' => $taskIds],
-        ],
-    ];
+        $variables = [
+            'input' => [
+                'id' => $project->id,
+                'metas' => ['delete' => $metaIds],
+                'tasks' => ['delete' => $taskIds],
+            ],
+        ];
 
-    /** @var TestCase $this */
-    $this->graphQL($mutationUpdate->operation(), $variables);
+        /** @var TestCase $this */
+        $this->graphQL($mutationUpdate->operation(), $variables);
 
-    assertEmpty(Meta::findMany($metaIds));
-    assertEmpty(Task::findMany($taskIds));
+        assertEmpty(Meta::findMany($metaIds));
+        assertEmpty(Task::findMany($taskIds));
 
-    assertTrue(27 === Meta::count());
-    assertTrue(18 === Task::count());
-});
+        assertTrue(27 === Meta::count());
+        assertTrue(18 === Task::count());
+    }
+);

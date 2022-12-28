@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\MetaType;
+use App\Models\Project;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,10 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class MetaFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     */
-    public function definition(): array
+    public function inputDefinition(): array
     {
         $type = fake()->randomElement(MetaType::values());
 
@@ -23,6 +21,19 @@ class MetaFactory extends Factory
                 ? fake()->unique()->url()
                 : fake()->unique()->word(),
             'type' => $type,
+        ];
+    }
+
+    /**
+     * Define the model's default state.
+     */
+    public function definition(): array
+    {
+        return [
+            ...$this->inputDefinition(),
+            'project_id' => Project::factory(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

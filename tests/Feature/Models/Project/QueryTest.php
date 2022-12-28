@@ -5,7 +5,6 @@ namespace Tests\Feature\Models\Project;
 use App\Models\Meta;
 use App\Models\Project;
 use App\Models\Task;
-use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
 $mutationQuery = GraphQLHelper::QUERY_PROJECTS;
@@ -25,11 +24,11 @@ test(
     function () use ($mutationQuery) {
         login();
 
-        /** @var Collection<Project> */
         $project = Project::factory()
             ->hasMetas(Meta::factory())
             ->hasTasks(Task::factory())
             ->create();
+        assert($project instanceof Project);
 
         $value = $mutationQuery->generateResponse(
             [
