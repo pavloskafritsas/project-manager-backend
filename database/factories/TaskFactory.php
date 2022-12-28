@@ -20,6 +20,7 @@ class TaskFactory extends Factory
         $end_at = $start_at
             ? fake()->randomElement([
                 Carbon::parse($start_at)->addDays(fake()->randomNumber(2))->format('Y-m-d'),
+                $start_at,
                 null,
             ])
             : null;
