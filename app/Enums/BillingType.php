@@ -9,5 +9,5 @@ enum BillingType: string
     use EnumHasValues;
 
     case FLAT = 'FLAT';
-    case RATE = 'RATE';
+    case HOURLY_RATE = 'HOURLY_RATE';
 }

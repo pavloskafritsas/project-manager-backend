@@ -3,8 +3,8 @@ enum BillingType {
     "Billing FLAT type."
     FLAT
 
-    "Billing RATE type."
-    RATE
+    "Billing HOURLY_RATE type."
+    HOURLY_RATE
 }
 
 "The billing's parent model."
