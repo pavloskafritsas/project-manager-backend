@@ -15,15 +15,14 @@ class TaskFactory extends Factory
 {
     public function inputDefinition(): array
     {
-        $start_at = fake()->randomElement([
-            fake()->date(),
-            null,
-        ]);
+        $start_at = fake()->randomElement([fake()->date(), null]);
 
-        $end_at = fake()->randomElement([
-            Carbon::parse($start_at)->addDays(fake()->randomNumber(2))->format('Y-m-d'),
-            null,
-        ]);
+        $end_at = $start_at
+            ? fake()->randomElement([
+                Carbon::parse($start_at)->addDays(fake()->randomNumber(2))->format('Y-m-d'),
+                null,
+            ])
+            : null;
 
         return [
             ...compact('start_at', 'end_at'),
