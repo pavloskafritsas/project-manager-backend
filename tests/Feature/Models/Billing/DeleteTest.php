@@ -5,6 +5,7 @@ namespace Tests\Feature\Models\Billing;
 use App\Models\Billing;
 use App\Models\Project;
 use App\Models\Task;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Tests\TestCase;
 
 $mutationDelete = GraphQLHelper::MUTATION_DELETE_BILLING;
@@ -20,18 +21,20 @@ test(
         $this
             ->graphQL($mutationDelete->operation(), ['id' => $project->billing->id])
             ->assertGraphQLErrorMessage('Unauthenticated.');
+
+        $project->billing->refresh();
     }
 );
 
 test(
     'authenticated user can delete billing',
     function () use ($mutationDelete) {
+        login();
+
         $project = Project::factory()
             ->has(Billing::factory())
             ->has(Task::factory()->has(Billing::factory()))
             ->create();
-
-        login();
 
         $value = $mutationDelete->generateResponse([
             'type' => $project->billing->type,
@@ -42,8 +45,10 @@ test(
         $this
             ->graphQL($mutationDelete->operation(), ['id' => $project->billing->id])
             ->assertJson($value);
+
+        $project->billing->refresh();
     }
-);
+)->throws(ModelNotFoundException::class);
 
 test(
     'cannot delete billing with invalid id',

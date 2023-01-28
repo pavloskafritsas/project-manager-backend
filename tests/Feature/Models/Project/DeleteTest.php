@@ -3,6 +3,7 @@
 namespace Tests\Feature\Models\Project;
 
 use App\Models\Project;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Tests\TestCase;
 
 $mutationDelete = GraphQLHelper::MUTATION_DELETE_PROJECT;
@@ -17,6 +18,8 @@ test(
         $this
             ->graphQL($mutationDelete->operation(), ['id' => $project->id])
             ->assertGraphQLErrorMessage('Unauthenticated.');
+
+        $project->refresh();
     }
 );
 
@@ -34,8 +37,10 @@ test(
         $this
             ->graphQL($mutationDelete->operation(), ['id' => $project->id])
             ->assertJson($value);
+
+        $project->refresh();
     }
-);
+)->throws(ModelNotFoundException::class);
 
 test(
     'cannot delete project with invalid id',
