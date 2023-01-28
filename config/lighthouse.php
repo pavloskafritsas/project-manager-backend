@@ -93,10 +93,7 @@ return [
         /*
          * Setting to true enables schema caching.
          */
-        'enable' => env(
-            'LIGHTHOUSE_CACHE_ENABLE',
-            ! in_array(env('APP_ENV'), ['local', 'testing'], true),
-        ),
+        'enable' => env('LIGHTHOUSE_CACHE_ENABLE', 'local' !== env('APP_ENV')),
 
         /*
          * Allowed values:
