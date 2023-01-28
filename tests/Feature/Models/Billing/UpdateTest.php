@@ -37,6 +37,8 @@ test(
         $project = Project::factory()
             ->has(Billing::factory())
             ->create();
+        assert($project instanceof Project);
+        assert($project->billing instanceof Billing);
 
         $value = ['price_amount' => 9999];
 
