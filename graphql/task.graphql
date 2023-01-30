@@ -47,6 +47,9 @@ type Task {
     "The task's billing."
     billing: Billing @morphOne
 
+    "The time entries of the task."
+    timeEntries: [TimeEntry]! @hasMany
+
     "When the task was created."
     created_at: DateTime!
 

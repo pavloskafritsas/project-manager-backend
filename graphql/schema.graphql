@@ -2,6 +2,7 @@
 #import billing.graphql
 #import meta.graphql
 #import project.graphql
+#import scalars.graphql
 #import task.graphql
-#import types.graphql
+#import time-entry.graphql
 #import user.graphql

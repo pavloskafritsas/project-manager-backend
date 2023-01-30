@@ -1,0 +1,72 @@
+"Time entry of a task."
+type TimeEntry {
+    "Unique primary key."
+    id: ID!
+
+    "The id of the task the time entry belongs to."
+    task_id: ID!
+
+    "The task the time entry belongs to."
+    task: Task! @belongsTo
+
+    "Time entry's date."
+    date: Date!
+
+    "Time entry's start time."
+    start_time: Time
+
+    "Time entry's end time."
+    end_time: Time
+
+    "Time entry's duration."
+    duration: Time
+
+    "Time entry's note."
+    note: String
+
+    "When the time entry was created."
+    created_at: DateTime!
+
+    "When the time entry was last updated."
+    updated_at: DateTime!
+}
+
+input CreateTimeEntryInput {
+    date: Date! @rules(apply: ["required"])
+    start_time: Time
+        @rules(apply: ["date_format:H:i:s", "required_without:duration"])
+    end_time: Time
+        @rules(apply: ["date_format:H:i:s", "required_without:duration"])
+    duration: Time
+        @rules(
+            apply: ["date_format:H:i:s", "required_without:start_time,end_time"]
+        )
+    note: String @rules(apply: ["nullable", "string", "max:255"])
+}
+
+input UpdateTimeEntryInput {
+    id: ID! @rules(apply: ["exists:time_entries,id"])
+    date: Date
+    start_time: Time
+        @rules(apply: ["date_format:H:i:s", "required_without:duration"])
+    end_time: Time
+        @rules(apply: ["date_format:H:i:s", "required_without:duration"])
+    duration: Time
+        @rules(
+            apply: ["date_format:H:i:s", "required_without:start_time,end_time"]
+        )
+    note: String @rules(apply: ["nullable", "string", "max:255"])
+}
+
+extend type Mutation @guard {
+    createTimeEntry(
+        task_id: ID! @rules(apply: ["exists:tasks,id"])
+        input: CreateTimeEntryInput! @spread
+    ): TimeEntry! @create @can(ability: "create")
+    updateTimeEntry(input: UpdateTimeEntryInput! @spread): TimeEntry!
+        @update
+        @can(ability: "update", find: "id")
+    deleteTimeEntry(
+        id: ID! @rules(apply: ["exists:time_entries,id"])
+    ): TimeEntry! @delete @can(ability: "delete", find: "id")
+}
