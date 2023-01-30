@@ -42,6 +42,7 @@ test(
         login();
 
         $project = Project::factory()->create();
+        assert($project instanceof Project);
 
         $input = Billing::factory()->inputDefinition();
 
@@ -61,6 +62,7 @@ test(
         login();
 
         $task = Task::factory()->create();
+        assert($task instanceof Task);
 
         $input = Billing::factory()->inputDefinition();
 
